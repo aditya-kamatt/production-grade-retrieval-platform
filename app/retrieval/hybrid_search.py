@@ -1,27 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import asdict
-
-from app.retrieval.hybrid_retriever import reciprocal_rank_fusion
+from app.retrieval.hybrid_retriever import reciprocal_rank_hybrid 
 from app.retrieval.lexical_retriever import BM25Retriever
 from app.retrieval.reranker import CrossEncoderReranker
 from app.retrieval.vector_retriever import FaissVectorRetriever
 
 
 class HybridSearchService:
-    """
-    Full retrieval pipeline:
-    lexical -> dense -> fusion -> rerank
-
-    Why this design:
-    - Keeps pipeline composable and testable.
-    - Lets evaluation compare:
-      * BM25 only
-      * Dense only
-      * Hybrid fused
-      * Hybrid + reranker
-    """
-
     def __init__(
         self,
         lexical_retriever: BM25Retriever,
@@ -43,7 +28,7 @@ class HybridSearchService:
         lexical_results = self.lexical_retriever.search(query=query, top_k=candidate_k)
         dense_results = self.vector_retriever.search(query=query, top_k=candidate_k)
 
-        fused_results = reciprocal_rank_fusion(
+        fused_results = reciprocal_rank_hybrid(
             result_sets={
                 "bm25": lexical_results,
                 "dense": dense_results,
@@ -58,6 +43,32 @@ class HybridSearchService:
                 candidates=fused_results,
                 top_k=final_k,
             )
-            return [asdict(item) for item in reranked]
+            return [
+                {
+                    "chunk_id": item.chunk_id,
+                    "document_id": item.document_id,
+                    "text": item.text,
+                    "metadata": item.metadata,
+                    "fused_score": item.fused_score,
+                    "rerank_score": item.rerank_score,
+                    "component_scores": item.component_scores,
+                    "component_ranks": item.component_ranks,
+                    "rank": item.rank,
+                }
+                for item in reranked
+            ]
 
-        return [asdict(item) for item in fused_results[:final_k]]
+        return [
+            {
+                "chunk_id": item.chunk_id,
+                "document_id": item.document_id,
+                "text": item.text,
+                "metadata": item.metadata,
+                "hybrid_score": item.hybrid_score,
+                "rerank_score": None,
+                "component_scores": item.component_scores,
+                "component_ranks": item.component_ranks,
+                "rank": idx,
+            }
+            for idx, item in enumerate(fused_results[:final_k], start=1)
+        ]
