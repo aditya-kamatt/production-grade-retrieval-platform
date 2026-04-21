@@ -1,0 +1,3 @@
+Kubernetes is an open-source platform designed to automate deploying, scaling, and operating containerized applications.
+
+It groups containers into logical units for easy management and discovery, providing features such as load balancing and self-healing.

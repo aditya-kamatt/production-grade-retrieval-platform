@@ -1,0 +1,3 @@
+API design involves creating interfaces that allow different software systems to communicate.
+
+Good API design emphasizes simplicity, consistency, and reliability. RESTful APIs are commonly used in web services due to their stateless nature.

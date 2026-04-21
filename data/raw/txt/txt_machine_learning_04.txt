@@ -1,0 +1,3 @@
+Machine learning is a subset of artificial intelligence that focuses on building systems that learn from data.
+
+Common approaches include supervised learning, unsupervised learning, and reinforcement learning. These methods enable models to improve performance over time.

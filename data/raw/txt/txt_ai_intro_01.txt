@@ -1,0 +1,3 @@
+Artificial intelligence (AI) refers to systems capable of performing tasks that typically require human intelligence. These include reasoning, learning, perception, and decision-making.
+
+AI systems can be broadly categorized into narrow AI and general AI. Most modern systems fall under narrow AI, where they are optimized for specific tasks such as language translation or image recognition.
