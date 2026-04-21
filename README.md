@@ -168,29 +168,6 @@ docker run -p 8000:8000 retrieval-platform
 
 
 
-## Cleanup Before Submission
-
-Ensure these are NOT committed:
-
-    __pycache__/
-    *.pyc
-    data/processed/
-    data/evaluation/runs/
-    data/evaluation/reports/
-
-
-
-## Submission Checklist
-
--   [ ] README complete
--   [ ] tests passing
--   [ ] ingestion works from scratch
--   [ ] API runs
--   [ ] evaluation reproducible
--   [ ] docs added (report, architecture, roadmap, AI usage)
-
-
-
 ## Future Improvements
 
 -   chunk-size experimentation
