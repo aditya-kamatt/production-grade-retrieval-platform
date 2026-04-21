@@ -1,0 +1,100 @@
+qrels:
+  q1:
+    chunk_001: 2
+    chunk_019: 1
+
+  q2:
+    chunk_104: 2
+    chunk_110: 1
+
+  q3:
+    chunk_230: 2
+    chunk_231: 1
+
+  q4:
+    chunk_010: 2
+    chunk_011: 1
+
+  q5:
+    chunk_050: 2
+    chunk_052: 1
+
+  q6:
+    chunk_060: 2
+    chunk_062: 1
+
+  q7:
+    chunk_070: 2
+    chunk_071: 1
+
+  q8:
+    chunk_080: 2
+    chunk_082: 1
+
+  q9:
+    chunk_090: 2
+    chunk_091: 1
+
+  q10:
+    chunk_120: 2
+    chunk_121: 1
+
+  q11:
+    chunk_130: 2
+    chunk_132: 1
+
+  q12:
+    chunk_140: 2
+    chunk_141: 1
+
+  q13:
+    chunk_150: 2
+    chunk_151: 1
+
+  q14:
+    chunk_160: 2
+    chunk_161: 1
+
+  q15:
+    chunk_170: 2
+    chunk_171: 1
+
+  q16:
+    chunk_180: 2
+    chunk_181: 1
+
+  q17:
+    chunk_190: 2
+    chunk_191: 1
+
+  q18:
+    chunk_200: 2
+    chunk_201: 1
+
+  q19:
+    chunk_210: 2
+    chunk_211: 1
+
+  q20:
+    chunk_220: 2
+    chunk_221: 1
+
+  q21:
+    chunk_240: 2
+    chunk_241: 1
+
+  q22:
+    chunk_250: 2
+    chunk_251: 1
+
+  q23:
+    chunk_260: 2
+    chunk_261: 1
+
+  q24:
+    chunk_270: 2
+    chunk_271: 1
+
+  q25:
+    chunk_280: 2
+    chunk_281: 1

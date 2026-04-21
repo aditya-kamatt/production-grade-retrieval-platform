@@ -160,3 +160,24 @@ class SQLiteChunkRepository(ChunkRepository):
                 "text": row["text"],
                 "metadata": json.loads(row["metadata_json"]),
             }
+    
+    def get_all_chunks(self) -> List[dict]:
+         with self._get_connection() as conn:
+            rows = conn.execute(
+                """
+                SELECT chunk_id, doc_id, chunk_index, text, metadata_json
+                FROM chunks
+                ORDER BY doc_id, chunk_index
+                """
+            ).fetchall()
+
+            return [
+                {
+                    "chunk_id": row["chunk_id"],
+                    "doc_id": row["doc_id"],
+                    "chunk_index": row["chunk_index"],
+                    "text": row["text"],
+                    "metadata": json.loads(row["metadata_json"]),
+                }
+                for row in rows
+            ]

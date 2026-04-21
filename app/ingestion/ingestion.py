@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+import json
 import logging
+import numpy as np
 from dataclasses import dataclass
 from time import perf_counter
 from typing import Dict, List, Optional
+from pathlib import Path
 
 from app.indexing.interfaces import ChunkRepository, EmbeddingRepository
 from app.ingestion.discovery import FileDiscovery
-from app.extractors.extract import DocumentExtractor
 from app.extractors.extract import DocumentExtractor
 from app.processing.chunking import DocumentChunker
 from app.processing.models import Chunk
@@ -56,10 +58,15 @@ class IngestionService:
             chunk_overlap=chunk_overlap,
             min_chunk_size=min_chunk_size,
         )
+        self._export_chunks: List[dict] = []
+        self._export_embeddings: List[List[float]] = []
+        self._processed_output_dir = Path("data/processed")
 
     def ingest_directory(self, root_dir: str) -> IngestionResult:
         started_at = perf_counter()
         stats = IngestionStats()
+        self._export_chunks = []
+        self._export_embeddings = []
         failures: List[Dict[str, str]] = []
 
         discovery = FileDiscovery(root_dir=root_dir)
@@ -93,6 +100,8 @@ class IngestionService:
                     }
                 )
 
+        self._write_export_files()
+        
         stats.total_duration_seconds = perf_counter() - started_at
         return IngestionResult(stats=stats, failures=failures)
 
@@ -155,10 +164,25 @@ class IngestionService:
                     "Embedding provider returned mismatched number of vectors"
                 )
 
+            # for chunk, vector in zip(batch, batch_vectors):
+            #     chunk_ids.append(chunk.chunk_id)
+            #     vectors.append(vector)
+            #     metadata_list.append(chunk.metadata)
+
             for chunk, vector in zip(batch, batch_vectors):
                 chunk_ids.append(chunk.chunk_id)
                 vectors.append(vector)
                 metadata_list.append(chunk.metadata)
+
+                self._export_chunks.append(
+                    {
+                        "chunk_id": chunk.chunk_id,
+                        "document_id": doc_id,
+                        "text": chunk.text,
+                        "metadata": chunk.metadata,
+                    }
+                )
+                self._export_embeddings.append(vector)
 
         self.embedding_repository.replace_embeddings(
             doc_id=doc_id,
@@ -174,3 +198,32 @@ class IngestionService:
             count = getattr(self.chunk_repository, 'count_chunks', lambda: 0)()
             return count if isinstance(count, int) else 0
         return 0
+    
+    def _write_export_files(self) -> None:
+        """
+        Write processed artifacts used by the evaluation runner:
+        - data/processed/chunks.json
+        - data/processed/embeddings.npy
+        """
+        self._processed_output_dir.mkdir(parents=True, exist_ok=True)
+
+        chunks_path = self._processed_output_dir / "chunks.json"
+        embeddings_path = self._processed_output_dir / "embeddings.npy"
+
+        with chunks_path.open("w", encoding="utf-8") as f:
+            json.dump(self._export_chunks, f, indent=2)
+
+        if self._export_embeddings:
+            embeddings_array = np.asarray(self._export_embeddings, dtype=np.float32)
+        else:
+            embeddings_array = np.empty((0, 0), dtype=np.float32)
+
+        np.save(embeddings_path, embeddings_array)
+
+        logger.info(
+            "Wrote export files: %s chunks -> %s, embeddings shape=%s -> %s",
+            len(self._export_chunks),
+            chunks_path,
+            embeddings_array.shape,
+            embeddings_path,
+        )

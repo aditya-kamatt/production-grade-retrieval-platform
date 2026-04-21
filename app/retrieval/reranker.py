@@ -12,7 +12,7 @@ class RerankedSearchResult:
     metadata: dict
     rerank_score: float
     rank: int
-    fused_score: float
+    hybrid_score: float
     component_scores: dict[str, float]
     component_ranks: dict[str, int]
 
@@ -24,7 +24,7 @@ class CrossEncoderReranker:
     Why this design:
     - Expensive stage is isolated to small candidate sets.
     - Easy to disable for ablation studies in evaluation.
-    - Lets you expose both fused_score and rerank_score in the API.
+    - Lets you expose both hybrid_score and rerank_score in the API.
     """
 
     def __init__(self, model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2") -> None:
@@ -47,7 +47,7 @@ class CrossEncoderReranker:
                     "text": candidate.text,
                     "metadata": candidate.metadata,
                     "rerank_score": float(score),
-                    "fused_score": float(candidate.fused_score),
+                    "hybrid_score": float(candidate.hybrid_score),
                     "component_scores": candidate.component_scores,
                     "component_ranks": candidate.component_ranks,
                 }
@@ -64,7 +64,7 @@ class CrossEncoderReranker:
                 metadata=row["metadata"],
                 rerank_score=row["rerank_score"],
                 rank=rank,
-                fused_score=row["fused_score"],
+                hybrid_score=row["hybrid_score"],
                 component_scores=row["component_scores"],
                 component_ranks=row["component_ranks"],
             )

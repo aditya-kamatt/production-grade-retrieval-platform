@@ -27,10 +27,11 @@ class FakeCrossEncoder:
 
 
 def fake_embedding_function(texts: list[str]) -> np.ndarray:
-    mapping = {
-        "how does hybrid retrieval work": np.array([1.0, 0.0, 0.0], dtype=np.float32),
-    }
-    return np.vstack([mapping[text] for text in texts]).astype(np.float32)
+    vectors = []
+    for text in texts:
+        hash_val = hash(text) % 1000 / 1000.0
+        vectors.append([hash_val, 1.0 - hash_val, 0.5])
+    return np.array(vectors, dtype=np.float32)
 
 
 def test_hybrid_pipeline_returns_ranked_results(monkeypatch):
@@ -59,9 +60,9 @@ def test_hybrid_pipeline_returns_ranked_results(monkeypatch):
 
     embeddings = np.array(
         [
-            [1.0, 0.0, 0.0],  # best dense match
-            [0.8, 0.0, 0.0],  # second best dense match
-            [0.0, 1.0, 0.0],  # unrelated
+            [1.0, 0.0, 0.0], 
+            [0.8, 0.0, 0.0],  
+            [0.0, 1.0, 0.0],  
         ],
         dtype=np.float32,
     )

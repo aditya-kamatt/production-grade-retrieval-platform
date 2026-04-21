@@ -1,0 +1,75 @@
+queries:
+  - id: q1
+    query: "How has revenue changed over recent quarters?"
+
+  - id: q2
+    query: "Which products generate the most revenue?"
+
+  - id: q3
+    query: "Are employee attrition rates increasing?"
+
+  - id: q4
+    query: "What trends are seen in customer support tickets?"
+
+  - id: q5
+    query: "Which regions are performing best in sales?"
+
+  - id: q6
+    query: "How effective are recent marketing campaigns?"
+
+  - id: q7
+    query: "Why are customers churning?"
+
+  - id: q8
+    query: "How is product usage changing over time?"
+
+  - id: q9
+    query: "Breakdown of operating expenses across departments"
+
+  - id: q10
+    query: "How has hiring changed over time?"
+
+  - id: q11
+    query: "What do employee satisfaction surveys indicate?"
+
+  - id: q12
+    query: "Which products are top performers and why?"
+
+  - id: q13
+    query: "How does revenue vary by product category?"
+
+  - id: q14
+    query: "How fast are support teams responding to customers?"
+
+  - id: q15
+    query: "What are the trends in monthly active users?"
+
+  - id: q16
+    query: "How does retention vary across cohorts?"
+
+  - id: q17
+    query: "What is the forecast for next quarter’s revenue?"
+
+  - id: q18
+    query: "How much does it cost to acquire a customer?"
+
+  - id: q19
+    query: "How efficiently is inventory being managed?"
+
+  - id: q20
+    query: "Which regions are growing fastest?"
+
+  - id: q21
+    query: "What are customers saying in feedback data?"
+
+  - id: q22
+    query: "How is average order value changing?"
+
+  - id: q23
+    query: "How fast are subscriptions growing?"
+
+  - id: q24
+    query: "What are the patterns in refunds and returns?"
+
+  - id: q25
+    query: "How reliable is delivery performance?"

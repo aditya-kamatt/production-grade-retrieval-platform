@@ -22,7 +22,7 @@ class HybridSearchService:
         query: str,
         candidate_k: int = 20,
         final_k: int = 5,
-        fusion_weights: dict[str, float] | None = None,
+        hybrid_weights: dict[str, float] | None = None,
         use_reranker: bool = True,
     ) -> list[dict]:
         lexical_results = self.lexical_retriever.search(query=query, top_k=candidate_k)
@@ -34,7 +34,7 @@ class HybridSearchService:
                 "dense": dense_results,
             },
             top_k=candidate_k,
-            weights=fusion_weights or {"bm25": 1.0, "dense": 1.0},
+            weights=hybrid_weights or {"bm25": 1.0, "dense": 1.0},
         )
 
         if use_reranker and self.reranker is not None:
@@ -49,7 +49,7 @@ class HybridSearchService:
                     "document_id": item.document_id,
                     "text": item.text,
                     "metadata": item.metadata,
-                    "fused_score": item.fused_score,
+                    "hybrid_score": item.hybrid_score,
                     "rerank_score": item.rerank_score,
                     "component_scores": item.component_scores,
                     "component_ranks": item.component_ranks,

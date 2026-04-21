@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class SearchRequest(BaseModel):
@@ -11,6 +11,11 @@ class SearchRequest(BaseModel):
     final_k: int = Field(default=5, ge=1, le=20)
     use_reranker: bool = True
 
+    @model_validator(mode="after")
+    def validate__values(self) -> "SearchRequest":
+        if self.candidate_k < self.final_k:
+            raise ValueError("candidate_k must be greater than or equal to final_k")
+        return self
 
 class SearchResultResponse(BaseModel):
     chunk_id: str
@@ -22,6 +27,7 @@ class SearchResultResponse(BaseModel):
     component_scores: dict[str, float] = {}
     component_ranks: dict[str, int] = {}
     rank: int
+    latency_ms: float
 
 
 class SearchResponse(BaseModel):

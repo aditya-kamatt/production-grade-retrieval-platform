@@ -26,6 +26,8 @@ class FAISSEmbeddingRepository(EmbeddingRepository):
 
         self.index = self._load_or_create_index()
         self.chunk_ids = self._load_chunk_ids()
+        # Cache vectors in memory to avoid expensive reconstruction
+        self._vector_cache: Optional[np.ndarray] = None
 
     def _load_or_create_index(self) -> faiss.Index:
         if self.index_path.exists():
@@ -58,10 +60,16 @@ class FAISSEmbeddingRepository(EmbeddingRepository):
         FAISS flat indexes do not support easy in-place delete by doc_id.
         So we rebuild the index excluding old chunk_ids for this doc if needed.
         This is acceptable for v1 and small-medium local corpora.
+        Uses cached vectors to avoid expensive reconstruction.
         """
         del metadata_list
 
-        existing_vectors = self._dump_all_vectors()
+        # Use cached vectors if available, otherwise reconstruct
+        if self._vector_cache is not None:
+            existing_vectors = self._vector_cache
+        else:
+            existing_vectors = self._dump_all_vectors()
+
         existing_pairs = [
             (chunk_id, vector)
             for chunk_id, vector in zip(self.chunk_ids, existing_vectors)
@@ -73,12 +81,15 @@ class FAISSEmbeddingRepository(EmbeddingRepository):
 
         self.index = faiss.IndexFlatIP(self.embedding_dimension)
         self.chunk_ids = []
+        self._vector_cache = None  # Invalidate cache
 
         if all_pairs:
             vectors = np.array([pair[1] for pair in all_pairs], dtype=np.float32)
             vectors = self._normalize(vectors)
             self.index.add(vectors) # type: ignore
             self.chunk_ids = [pair[0] for pair in all_pairs]
+            # Cache the normalized vectors
+            self._vector_cache = vectors.copy()
 
         self._save()
 
