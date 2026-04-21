@@ -12,7 +12,7 @@ class DummyCandidate:
     document_id: str
     text: str
     metadata: dict
-    fused_score: float
+    hybrid_score: float
     component_scores: dict[str, float]
     component_ranks: dict[str, int]
 
@@ -44,7 +44,7 @@ def test_reranker_reorders_candidates(monkeypatch):
             document_id="doc-1",
             text="This is a weak match",
             metadata={},
-            fused_score=0.9,
+            hybrid_score=0.9,
             component_scores={"bm25": 4.0},
             component_ranks={"bm25": 1},
         ),
@@ -53,7 +53,7 @@ def test_reranker_reorders_candidates(monkeypatch):
             document_id="doc-2",
             text="This is the best answer",
             metadata={},
-            fused_score=0.7,
+            hybrid_score=0.7,
             component_scores={"dense": 0.8},
             component_ranks={"dense": 2},
         ),

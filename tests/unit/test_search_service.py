@@ -3,9 +3,24 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-from app.core.search_service import HybridCandidate, SearchService
+class FakeEmbeddingModel:
+    def __init__(self) -> None:
+        self.calls = []
 
+    def encode(self, texts, convert_to_numpy: bool, normalize_embeddings: bool):
+        import numpy as np
+
+        self.calls.append(
+            {
+                "texts": texts,
+                "convert_to_numpy": convert_to_numpy,
+                "normalize_embeddings": normalize_embeddings,
+            }
+        )
+        return np.array([[1.0, 2.0, 3.0]], dtype=np.float32)
 
 class FakeChunkRepository:
     def __init__(self, db_path: str) -> None:
@@ -49,25 +64,6 @@ class FakeEmbeddingRepository:
             {"chunk_id": "c2", "score": 0.91},
             {"chunk_id": "c1", "score": 0.76},
         ]
-
-
-class FakeSentenceTransformer:
-    def __init__(self, model_name: str) -> None:
-        self.model_name = model_name
-        self.calls = []
-
-    def encode(self, texts, convert_to_numpy: bool, normalize_embeddings: bool):
-        import numpy as np
-
-        self.calls.append(
-            {
-                "texts": texts,
-                "convert_to_numpy": convert_to_numpy,
-                "normalize_embeddings": normalize_embeddings,
-            }
-        )
-        return np.array([[1.0, 2.0, 3.0]], dtype=np.float32)
-
 
 class FakeBM25Retriever:
     def __init__(self, chunks) -> None:
@@ -133,10 +129,8 @@ class FakeReranker:
 
 @pytest.fixture
 def patched_search_service(monkeypatch):
-    """
-    Patches all external dependencies imported inside app.core.search_service
-    so SearchService can be unit-tested in isolation.
-    """
+    from app.core.search_service import SearchService
+
     monkeypatch.setattr(
         "app.core.search_service.SQLiteChunkRepository",
         FakeChunkRepository,
@@ -146,8 +140,9 @@ def patched_search_service(monkeypatch):
         FakeEmbeddingRepository,
     )
     monkeypatch.setattr(
-        "app.core.search_service.SentenceTransformer",
-        FakeSentenceTransformer,
+        SearchService,
+        "_load_embedding_model",
+        lambda self, model_name: FakeEmbeddingModel(),
     )
     monkeypatch.setattr(
         "app.core.search_service.BM25Retriever",
@@ -158,9 +153,11 @@ def patched_search_service(monkeypatch):
         FakeReranker,
     )
 
+    return SearchService
+
 
 def test_init_loads_chunks_and_builds_chunk_lookup(patched_search_service):
-    service = SearchService()
+    service = patched_search_service()
 
     assert len(service.chunks) == 2
     assert "c1" in service.chunk_by_id
@@ -172,6 +169,8 @@ def test_init_loads_chunks_and_builds_chunk_lookup(patched_search_service):
 
 
 def test_init_raises_when_no_chunks(monkeypatch):
+    from app.core.search_service import SearchService
+
     monkeypatch.setattr(
         "app.core.search_service.SQLiteChunkRepository",
         EmptyChunkRepository,
@@ -181,8 +180,9 @@ def test_init_raises_when_no_chunks(monkeypatch):
         FakeEmbeddingRepository,
     )
     monkeypatch.setattr(
-        "app.core.search_service.SentenceTransformer",
-        FakeSentenceTransformer,
+        SearchService,
+        "_load_embedding_model",
+        lambda self, model_name: FakeEmbeddingModel(),
     )
     monkeypatch.setattr(
         "app.core.search_service.BM25Retriever",
@@ -198,7 +198,7 @@ def test_init_raises_when_no_chunks(monkeypatch):
 
 
 def test_embed_returns_float_list(patched_search_service):
-    service = SearchService()
+    service = patched_search_service()
 
     embedding = service._embed("what is bm25")
 
@@ -208,7 +208,7 @@ def test_embed_returns_float_list(patched_search_service):
 
 
 def test_vector_search_returns_ranked_chunk_results(patched_search_service):
-    service = SearchService()
+    service = patched_search_service()
 
     results = service._vector_search("retrieval", top_k=2)
 
@@ -226,7 +226,7 @@ def test_vector_search_returns_ranked_chunk_results(patched_search_service):
 
 
 def test_vector_search_skips_missing_chunk_ids(patched_search_service):
-    service = SearchService()
+    service = patched_search_service()
 
     def fake_search(query_vec, top_k):
         return [
@@ -245,7 +245,8 @@ def test_vector_search_skips_missing_chunk_ids(patched_search_service):
 
 
 def test_fuse_combines_lexical_and_vector_scores_and_sorts_descending(patched_search_service):
-    service = SearchService()
+    from app.core.search_service import HybridCandidate
+    service = patched_search_service()
 
     lexical = [
         SimpleNamespace(
@@ -296,7 +297,7 @@ def test_fuse_combines_lexical_and_vector_scores_and_sorts_descending(patched_se
 
 
 def test_search_with_reranker_returns_expected_shape_and_scores(patched_search_service):
-    service = SearchService()
+    service = patched_search_service()
 
     result = service.search(
         query="bm25",
@@ -320,7 +321,7 @@ def test_search_with_reranker_returns_expected_shape_and_scores(patched_search_s
 
 
 def test_search_without_reranker_returns_fused_results_and_none_reranker_score(patched_search_service):
-    service = SearchService()
+    service = patched_search_service()
 
     result = service.search(
         query="bm25",
@@ -348,7 +349,7 @@ def test_search_without_reranker_returns_fused_results_and_none_reranker_score(p
 
 
 def test_search_passes_expected_arguments_to_retriever_and_reranker(patched_search_service):
-    service = SearchService()
+    service = patched_search_service()
 
     result = service.search(
         query="vector databases",

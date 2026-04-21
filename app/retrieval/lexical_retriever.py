@@ -40,6 +40,9 @@ class BM25Retriever:
         self.chunks = list(chunks)
         if not self.chunks:
             raise ValueError("BM25Retriever requires at least one chunk.")
+        for chunk in self.chunks:
+            if "text" not in chunk:
+                raise ValueError("Chunk missing required field: text")
 
         self.tokenized_corpus = [simple_tokenize(chunk["text"]) for chunk in self.chunks]
         self.model = BM25Okapi(self.tokenized_corpus)

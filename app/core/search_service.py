@@ -5,13 +5,11 @@ from dataclasses import dataclass
 import time
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 from app.indexing.faiss_store import FAISSEmbeddingRepository
 from app.indexing.sqlite_store import SQLiteChunkRepository
 from app.retrieval.lexical_retriever import BM25Retriever, LexicalSearchResult
 from app.retrieval.reranker import CrossEncoderReranker, RerankedSearchResult
-
 
 @dataclass(slots=True)
 class HybridCandidate:
@@ -53,11 +51,21 @@ class SearchService:
             chunk["chunk_id"]: chunk for chunk in self.chunks
         }
 
-        self.embedding_model = SentenceTransformer(embedding_model_name)
+        self._embedding_model_name = embedding_model_name
+        self.embedding_model = None
         self.lexical_retriever = BM25Retriever(self.chunks)
-        self.reranker = CrossEncoderReranker(reranker_model_name)
+        self._reranker_model_name = reranker_model_name
+        self.reranker = None
 
+    def _load_reranker(self):
+        if self.reranker is None:
+            self.reranker = CrossEncoderReranker(self._reranker_model_name)
+        return self.reranker
+    
     def _embed(self, query: str) -> List[float]:
+        if self.embedding_model is None:
+            self.embedding_model = self._load_embedding_model(self._embedding_model_name)
+
         return self.embedding_model.encode(
             [query],
             convert_to_numpy=True,
@@ -77,7 +85,7 @@ class SearchService:
             results.append(
                 {
                     "chunk_id": chunk["chunk_id"],
-                    "document_id": chunk["doc_id"],
+                    "document_id": chunk["document_id"],
                     "text": chunk["text"],
                     "metadata": chunk["metadata"],
                     "score": float(hit["score"]),
@@ -128,6 +136,10 @@ class SearchService:
         results.sort(key=lambda x: x.hybrid_score, reverse=True)
 
         return results[:k]
+    
+    def _load_embedding_model(self, model_name: str):
+        from sentence_transformers import SentenceTransformer
+        return SentenceTransformer(model_name)
 
     def search(
         self,
@@ -144,7 +156,8 @@ class SearchService:
         fused = self._fuse(lexical, vector, candidate_k)
 
         if use_reranker:
-            reranked: List[RerankedSearchResult] = self.reranker.rerank(
+            reranker = self._load_reranker()
+            reranked: List[RerankedSearchResult] = reranker.rerank(
                 query=query,
                 candidates=fused,
                 top_k=final_k,
