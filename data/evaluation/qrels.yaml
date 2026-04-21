@@ -1,100 +1,46 @@
 qrels:
   q1:
-    chunk_001: 2
-    chunk_019: 1
+    990d30f3a6f503de0bfc73f99a21cc9d62d17ba3328dfb8d6f6d3e25e4202582_0_0f056772a61473ea: 3
+    0f61447e10e6e271209816c7a3aa1a48c497686e163f26a8c875ab62fd42ef5a_0_a1bc04670c7b7849: 2
+    4161df772b2341d816675c98b5ecf7d03f1b5a0a6655f7c39e8bb7d3bf9e6a52_4_bd30fe5679f830cc: 1
 
   q2:
-    chunk_104: 2
-    chunk_110: 1
+    0f61447e10e6e271209816c7a3aa1a48c497686e163f26a8c875ab62fd42ef5a_0_a1bc04670c7b7849: 3
 
   q3:
-    chunk_230: 2
-    chunk_231: 1
+    a70c78e2b4db85bfee7696e19829571a3b05f69c616db5c039f6f4eb33b1a0b6_4_21be584e3e273852: 2
+    0f61447e10e6e271209816c7a3aa1a48c497686e163f26a8c875ab62fd42ef5a_0_a1bc04670c7b7849: 1
 
   q4:
-    chunk_010: 2
-    chunk_011: 1
+    0f61447e10e6e271209816c7a3aa1a48c497686e163f26a8c875ab62fd42ef5a_0_a1bc04670c7b7849: 3
+    990d30f3a6f503de0bfc73f99a21cc9d62d17ba3328dfb8d6f6d3e25e4202582_0_0f056772a61473ea: 3
 
   q5:
-    chunk_050: 2
-    chunk_052: 1
+    1724ac30a5e03b86b348e3ff40756a7dc7365a7911dc41af0c1b411e425bc1fe_0_fd6edc2516026f92: 3
 
   q6:
-    chunk_060: 2
-    chunk_062: 1
+    428ffb4922383bb0400150f5b3ba92fcb52cb91faef3e7bec6a93b58c2e33a16_0_4e946b77ed74965a: 3
 
   q7:
-    chunk_070: 2
-    chunk_071: 1
+    09009810075cb393e09e4c30a355c984dcf86b7c20d0f8ab9ded7239863b5858_0_db95586fce1f5ec3: 3
+    5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e_6_be9f08a06772d8f6: 2
 
   q8:
-    chunk_080: 2
-    chunk_082: 1
+    09009810075cb393e09e4c30a355c984dcf86b7c20d0f8ab9ded7239863b5858_0_db95586fce1f5ec3: 1
 
   q9:
-    chunk_090: 2
-    chunk_091: 1
+    2a21b5acd729f841c262b5a7a1ef3445d851abbbad3189fb59658bb230898ea6_0_c580a14a011c6ece: 3
 
   q10:
-    chunk_120: 2
-    chunk_121: 1
+    bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697_13_bd55f16ab9992ccd: 3
+    bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697_6_a3774358edab180d: 3
+    bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697_4_0fd4a029b11b4eb7: 2
+    5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e_19_d7ba711a73760bae: 1
 
   q11:
-    chunk_130: 2
-    chunk_132: 1
+    76a3872d244793563a5b000b818cbaf0ca8972ab1145d32be474c05b2a8f3070_4_d72b6a234cb778a1: 3
+    76a3872d244793563a5b000b818cbaf0ca8972ab1145d32be474c05b2a8f3070_14_78c454f083876697: 3
+    76a3872d244793563a5b000b818cbaf0ca8972ab1145d32be474c05b2a8f3070_2_7d62844e4166a1ab: 2
+    5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e_57_e1631719b1a652ac: 1
 
-  q12:
-    chunk_140: 2
-    chunk_141: 1
-
-  q13:
-    chunk_150: 2
-    chunk_151: 1
-
-  q14:
-    chunk_160: 2
-    chunk_161: 1
-
-  q15:
-    chunk_170: 2
-    chunk_171: 1
-
-  q16:
-    chunk_180: 2
-    chunk_181: 1
-
-  q17:
-    chunk_190: 2
-    chunk_191: 1
-
-  q18:
-    chunk_200: 2
-    chunk_201: 1
-
-  q19:
-    chunk_210: 2
-    chunk_211: 1
-
-  q20:
-    chunk_220: 2
-    chunk_221: 1
-
-  q21:
-    chunk_240: 2
-    chunk_241: 1
-
-  q22:
-    chunk_250: 2
-    chunk_251: 1
-
-  q23:
-    chunk_260: 2
-    chunk_261: 1
-
-  q24:
-    chunk_270: 2
-    chunk_271: 1
-
-  q25:
-    chunk_280: 2
-    chunk_281: 1
+ 

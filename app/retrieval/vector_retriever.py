@@ -84,6 +84,15 @@ class FaissVectorRetriever:
             return []
 
         query_vector = self._embed_query(query)
+
+        if query_vector.shape[1] != self.index.d:
+            raise ValueError(
+                f"Embedding dimension mismatch: "
+                f"query dim={query_vector.shape[1]}, "
+                f"index dim={self.index.d}, "
+                f"stored embeddings shape={self.embeddings.shape}"
+            )
+
         scores, indices = self.index.search(query_vector, top_k) # type: ignore
 
         results: list[VectorSearchResult] = []

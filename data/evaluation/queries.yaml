@@ -1,75 +1,61 @@
 queries:
-  - id: q1
-    query: "How has revenue changed over recent quarters?"
-
-  - id: q2
-    query: "Which products generate the most revenue?"
-
-  - id: q3
-    query: "Are employee attrition rates increasing?"
-
-  - id: q4
-    query: "What trends are seen in customer support tickets?"
-
-  - id: q5
-    query: "Which regions are performing best in sales?"
-
-  - id: q6
-    query: "How effective are recent marketing campaigns?"
-
-  - id: q7
-    query: "Why are customers churning?"
-
-  - id: q8
-    query: "How is product usage changing over time?"
-
-  - id: q9
-    query: "Breakdown of operating expenses across departments"
-
-  - id: q10
-    query: "How has hiring changed over time?"
-
-  - id: q11
-    query: "What do employee satisfaction surveys indicate?"
-
-  - id: q12
-    query: "Which products are top performers and why?"
-
-  - id: q13
-    query: "How does revenue vary by product category?"
-
-  - id: q14
-    query: "How fast are support teams responding to customers?"
-
-  - id: q15
-    query: "What are the trends in monthly active users?"
-
-  - id: q16
-    query: "How does retention vary across cohorts?"
-
-  - id: q17
-    query: "What is the forecast for next quarter’s revenue?"
-
-  - id: q18
-    query: "How much does it cost to acquire a customer?"
-
-  - id: q19
-    query: "How efficiently is inventory being managed?"
-
-  - id: q20
-    query: "Which regions are growing fastest?"
-
-  - id: q21
-    query: "What are customers saying in feedback data?"
-
-  - id: q22
-    query: "How is average order value changing?"
-
-  - id: q23
-    query: "How fast are subscriptions growing?"
-
-  - id: q24
-    query: "What are the patterns in refunds and returns?"
-
-  - id: q25
-    query: "How reliable is delivery performance?"
+  - query_id: q1
+    text: "artificial intelligence definition"
+  - query_id: q2
+    text: "types of machine learning"
+  - query_id: q3
+    text: "supervised learning overview"
+  - query_id: q4
+    text: "AI versus machine learning"
+  - query_id: q5
+    text: "API design best practices"
+  - query_id: q6
+    text: "BM25 ranking algorithm"
+  - query_id: q7
+    text: "vector search embeddings"
+  - query_id: q8
+    text: "semantic search versus keyword search"
+  - query_id: q9
+    text: "reranking retrieval pipeline"
+  - query_id: q10
+    text: "transformer attention mechanism"
+  - query_id: q11
+    text: "BERT pretraining method"
+  - query_id: q12
+    text: "Kubernetes purpose"
+  - query_id: q13
+    text: "scalability and reliability in distributed systems"
+  - query_id: q14
+    text: "REST API maintainability"
+  - query_id: q15
+    text: "BM25 lexical retrieval"
+  - query_id: q16
+    text: "API versioning strategies"
+  - query_id: q17
+    text: "cloud computing basics"
+  - query_id: q18
+    text: "cloud service models IaaS PaaS SaaS"
+  - query_id: q19
+    text: "hybrquery_id retrieval reranker"
+  - query_id: q20
+    text: "system design fundamentals"
+  - query_id: q21
+    text: "self attention mechanism"
+  - query_id: q22
+    text: "Kubernetes orchestration benefits"
+  - query_id: q23
+    text: "bquery_idirectional transformers for language understanding"
+  - query_id: q24
+    text: "DistilBERT paper"
+  - query_id: q25
+    text: "DistilBERT compressed BERT"
+  - query_id: q26
+    text: "RoBERTa pretraining improvements"
+  - query_id: q27
+    text: "LLaMA foundation model"
+  - query_id: q28
+    text: "large language model fundamentals"
+  - query_id: q29
+    text: "UK AI strategy priorities"
+  - query_id: q30
+    text: "World Development Report data for better lives"

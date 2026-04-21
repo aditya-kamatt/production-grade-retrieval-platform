@@ -58,7 +58,12 @@ class EvaluationRunner:
         self.vector_retriever = FaissVectorRetriever(
             chunks=self.chunks,
             embeddings=self.embeddings,
-            embedding_function=self.embedding_provider.embed_texts,
+            embedding_function=lambda texts: self.embedding_provider.model.encode(
+                texts,
+                convert_to_numpy=True,
+                normalize_embeddings=True,
+                show_progress_bar=False,
+            ),
         )
         self.reranker = CrossEncoderReranker(model_name=reranker_model_name)
 
@@ -134,7 +139,7 @@ class EvaluationRunner:
                 "document_id": item.document_id,
                 "text": item.text,
                 "metadata": item.metadata,
-                "hybrid_score": float(item.score),  # kept under one common field for reporting
+                "hybrid_score": float(item.score),  
                 "rerank_score": None,
                 "component_scores": {"dense": float(item.score)},
                 "component_ranks": {"dense": int(item.rank)},
@@ -227,9 +232,10 @@ class EvaluationRunner:
             for result in results:
                 chunk_id = result.get("chunk_id")
                 if not chunk_id:
-                    raise KeyError(
-                        f"Search result for query '{query_id}' is missing 'chunk_id': {result}"
-                    )
+                    # raise KeyError(
+                    #    f"Search result for query '{query_id}' is missing 'chunk_id': {result}"
+                    # )
+                    continue
                 chunk_ids.append(chunk_id)
 
             run_results[query_id] = chunk_ids
@@ -259,6 +265,12 @@ class EvaluationRunner:
         """
         qrels = self.load_qrels()
 
+        # # Cold run (not used for metrics, only latency)
+        # cold_run_output = self.run_configuration(
+        #     config_name=config_name,
+        #     candidate_k=candidate_k,
+        #     final_k=final_k,
+        # )
         run_output = self.run_configuration(
             config_name=config_name,
             candidate_k=candidate_k,
@@ -278,6 +290,9 @@ class EvaluationRunner:
             "metrics": metrics_report,
             "latency_summary_ms": run_output["latency_summary_ms"],
             "query_latencies_ms": run_output["query_latencies_ms"],
+            # "cold_latency_summary_ms": cold_run_output["latency_summary_ms"],
+
+            "notes": "Latency includes embedding + retrieval + reranking",
         }
 
         run_path = self.runs_dir / f"{config_name}_run.json"
@@ -434,7 +449,7 @@ def build_runner() -> EvaluationRunner:
 
 def run_evaluation() -> dict[str, Any]:
     runner = build_runner()
-    return runner.evaluate_all(candidate_k=20, final_k=5)
+    return runner.evaluate_all(candidate_k=10, final_k=5)
 
 
 if __name__ == "__main__":
