@@ -131,7 +131,7 @@ Open: http://127.0.0.1:8000/docs
 
 ``` json
 {
-  "query": "What is the BERT pretraining method?",
+  "query": "BERT pretraining method",
   "top_k": 5
 }
 ```
