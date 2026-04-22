@@ -3,9 +3,11 @@
 A production-grade retrieval system designed with modular architecture,
 hybrid search, and measurable evaluation.
 
-This system ingests heterogeneous documents, processes them into
-structured chunks, builds lexical and vector indexes, and serves ranked
-search results via API and CLI.
+This system prioritises:
+- Measurable retrieval quality (evaluation framework)
+- Modular architecture (independent components)
+- Low-latency local deployment
+- Extensibility toward production systems
 
 
 
@@ -34,15 +36,32 @@ Pipeline:
 2.  **Extraction** → parses documents into text\
 3.  **Normalisation** → cleans text\
 4.  **Chunking** → splits into retrieval units\
-5.  **Indexing** →
+5.  **Indexing**:
     -   FAISS (vector)\
     -   SQLite / BM25 (lexical)\
-6.  **Retrieval** →
+6.  **Retrieval**:
     -   lexical\
     -   semantic\
     -   hybrid\
     -   hybrid + rerank\
 7.  **Serving** → FastAPI + CLI
+
+## System Design
+
+```mermaid
+flowchart TD
+    A[User Query] --> B[FastAPI Route]
+    B --> C[SearchService]
+
+    C --> D["Lexical Retriever (BM25)"]
+    C --> E["Vector Retriever (FAISS)"]
+
+    D --> F[Hybrid Fusion]
+    E --> F
+
+    F --> G["Reranker (Optional)"]
+    G --> H[Top-K Results]
+```
 
 
 
@@ -73,9 +92,12 @@ Pipeline:
 
 ``` bash
 git clone https://github.com/aditya-kamatt/production-grade-retrieval-platform.git
+
 cd production-grade-retrieval-platform
+
 python -m venv .venv
 source .venv/bin/activate
+
 pip install -r requirements.txt
 ```
 
@@ -87,8 +109,11 @@ pip install -r requirements.txt
 python app/scripts/run_ingestion.py
 ```
 
-This: - extracts documents - chunks text - builds embeddings - writes
-indexes
+This: 
+- extracts documents 
+- chunks text 
+- builds embeddings 
+- writes indexes
 
 
 ## Run API
@@ -106,8 +131,36 @@ Open: http://127.0.0.1:8000/docs
 
 ``` json
 {
-  "query": "What is hybrid search?",
+  "query": "What is the BERT pretraining method?",
   "top_k": 5
+}
+```
+### Example Output
+```json
+{
+  "query": "BERT pretraining method",
+  "results": [
+    {
+      "chunk_id": "76a3872d244793563a5b000b818cbaf0ca8972ab1145d32be474c05b2a8f3070_2_7d62844e4166a1ab",
+      "document_id": "76a3872d244793563a5b000b818cbaf0ca8972ab1145d32be474c05b2a8f3070",
+      "text": "We present a replication study of BERT pre-training ... and propose an improved recipe for training BERT models, which we call RoBERTa.",
+      "metadata": {
+        "source_path": "data/raw/pdf/pdf_roberta_05.pdf",
+        "file_type": "pdf",
+        "chunk_index": 2
+      },
+      "fused_score": 0.0161,
+      "rerank_score": 6.10,
+      "component_scores": {
+        "bm25": 0.0,
+        "vector": 0.6684,
+        "hybrid": 0.0161,
+        "reranker": 6.10
+      },
+      "rank": 1,
+      "latency_ms": 122.36
+    }
+  ]
 }
 ```
 
@@ -138,10 +191,23 @@ Run:
 python app/evaluation/runner.py
 ```
 
-Metrics: - Precision@5 - Recall@5 - NDCG@5
+**Metrics**:
+ - Precision@5 
+ - Recall@5 
+ - NDCG@5
 
-Compare: - semantic-only - hybrid - hybrid + rerank
 
+**Compare**: 
+- Semantic-only 
+- Hybrid 
+- Hybrid + rerank
+
+## Evaluation Results
+
+| Config         | Precision@5 | Recall@5 | nDCG@5 | Latency (ms) |
+|----------------|------------|----------|--------|-------------|
+| Semantic       | 0.327      | 0.886    | 0.882  | 9.4         |
+| Hybrid         | 0.309      | 0.856    | 0.838  | 11.8        |
 
 
 ## Docker
@@ -158,6 +224,12 @@ docker run -p 8000:8000 retrieval-platform
 -   Modular design allows independent testing and tuning
 -   Evaluation-first mindset ensures measurable correctness
 
+## Production Considerations
+
+- Latency: ~9–12ms per query depending on configuration
+- Scalability: Single-node (SQLite + FAISS), not horizontally scalable
+- Model cost: Lazy loading reduces startup overhead
+- Trade-off: Hybrid improves robustness but increases latency
 
 
 ## Known Limitations
@@ -165,8 +237,6 @@ docker run -p 8000:8000 retrieval-platform
 -   ingestion required before search
 -   retrieval quality depends on chunking + qrels
 -   reranking increases latency
-
-
 
 ## Future Improvements
 
@@ -178,6 +248,3 @@ docker run -p 8000:8000 retrieval-platform
 
 
 
-## License
-
-See LICENSE file.
