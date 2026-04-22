@@ -204,11 +204,20 @@ python app/evaluation/runner.py
 
 ## Evaluation Results
 
-| Config         | Precision@5 | Recall@5 | nDCG@5 | Latency (ms) |
-|----------------|------------|----------|--------|-------------|
-| Semantic       | 0.327      | 0.886    | 0.882  | 9.4         |
-| Hybrid         | 0.309      | 0.856    | 0.838  | 11.8        |
+| Config              | Precision@5 | Recall@5 | nDCG@5 | Latency (ms) |
+|---------------------|------------|----------|--------|--------------|
+| Semantic            | 0.327      | 0.886    | 0.882  | 9.4          |
+| Hybrid              | 0.309      | 0.856    | 0.838  | 11.8         |
+| Hybrid + Reranker   | 0.364      | 0.932    | 0.903  | 42.3         |
 
+**Key Observations**
+
+- Hybrid retrieval alone slightly underperforms semantic search due to score fusion noise.
+- Adding a reranker significantly improves ranking quality:
+  - Precision@5: 0.309 → 0.364
+  - nDCG@5: 0.838 → 0.903
+  - Recall@5: 0.856 → 0.932
+- This comes at a latency cost (~4x), highlighting the trade-off between accuracy and performance.
 
 ## Docker
 
