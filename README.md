@@ -243,17 +243,17 @@ docker run -p 8000:8000 retrieval-platform
 
 ## Known Limitations
 
--   ingestion required before search
--   retrieval quality depends on chunking + qrels
--   reranking increases latency
+-   Ingestion required before search
+-   Retrieval quality depends on chunking + qrels
+-   Reranking increases latency
 
 ## Future Improvements
 
--   chunk-size experimentation
--   caching embeddings
--   latency monitoring
--   better evaluation reporting
--   production observability
+-   Chunk-size experimentation
+-   Caching embeddings
+-   Latency monitoring
+-   Better evaluation reporting
+-   Production observability
 
 
 
